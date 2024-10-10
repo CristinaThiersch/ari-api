@@ -10,15 +10,48 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = ../../configs/env("DATABASE_URL")
 }
 
-model Usuario {
- id Int @id @default(autoincrement())
- nome String
- email String @unique
- senha String
- data_nascimento DateTime
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
+model User {
+  id               Int         @id @default(autoincrement())
+  name             String
+  email            String      @unique
+  password         String
+  birthDate        DateTime
+  status           Boolean
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  prescriptions     Prescription[] @relation("UserPrescriptions") // Adicionado
+}
+
+model Medication {
+  id               Int         @id @default(autoincrement())
+  name             String
+  functionMed      String
+  dosage           String
+  status           Boolean
+  prescriptions     Prescription[]
+}
+
+model Prescription {
+  id               Int         @id @default(autoincrement())
+  userId           Int
+  medicationId     Int
+  observation      String?
+  frequency        Int
+  startDate        DateTime
+  endDate          DateTime
+  status           Boolean
+  user             User        @relation("UserPrescriptions", fields: [userId], references: [id]) // Atualizado
+  medication       Medication   @relation(fields: [medicationId], references: [id])
+  histories        History[]
+}
+
+model History {
+  id               Int         @id @default(autoincrement())
+  prescriptionId   Int
+  currentDate      DateTime
+  status           String
+  prescription     Prescription @relation(fields: [prescriptionId], references: [id])
 }
