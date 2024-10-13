@@ -33,6 +33,29 @@ const findPrescriptions = async (req, res) => {
   }
 };
 
+// Função para obter todas as prescrições do usuário
+const findPrescriptionsByUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const prescriptions = await prisma.prescription.findMany({
+      where: { 
+        AND: [
+          { idUser: parseInt(id) },
+          { status: true } 
+        ]
+      }});
+
+    if (!prescription || !prescription.status) {
+      return res.status(404).json({ error: 'Prescrições não encontradas ou estão inativas.' });
+    }
+
+    res.status(200).json(prescription);
+    }catch (error) {
+      res.status(400).json({ error: 'Erro ao buscar prescrição.', details: error.message });
+  }
+};
+  
+
 // Função para obter uma prescrição por ID
 const findPrescriptionById = async (req, res) => {
   const { id } = req.params;
@@ -97,6 +120,7 @@ const deletePrescription = async (req, res) => {
 module.exports = {
   createPrescription,
   findPrescriptions,
+  findPrescriptionsByUser,
   findPrescriptionById,
   updatePrescription,
   deletePrescription,

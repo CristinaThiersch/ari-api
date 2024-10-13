@@ -8,7 +8,8 @@ const {
   deleteUser,
 } = require('../controller/user'); // Importa todas as funções do controller
 const {
-  autenticarToken
+  autenticarToken,
+  isAdmin
 } = require('../controller/login');
 
 /**
@@ -58,7 +59,7 @@ router.post('/user', createUser)
  *       400:
  *         description: Falha ao buscar usuários.
  */
-router.get('/users', findUsers);
+router.get('/users', autenticarToken, isAdmin, findUsers);
 
 /**
  * @swagger

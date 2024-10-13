@@ -3,12 +3,14 @@ const router = express.Router();
 const {
   createPrescription,
   findPrescriptions,
+  findPrescriptionsByUser,
   findPrescriptionById,
   updatePrescription,
   deletePrescription,
 } = require('../controller/prescription'); // Importa todas as funções do controller
 const {
-  autenticarToken
+  autenticarToken,
+  isAdmin,
 } = require('../controller/login');
 
 /**
@@ -56,7 +58,21 @@ router.post('/prescription', autenticarToken, createPrescription)
  *       400:
  *         description: Falha ao buscar prescrições.
  */
-router.get('/prescriptions', autenticarToken, findPrescriptions);
+router.get('/prescriptions', autenticarToken, isAdmin, findPrescriptions);
+
+/**
+ * @swagger
+ * /prescriptions:
+ *   get:
+ *     summary: Lista todas as prescrições do usuário logado
+ *     description: Obtém uma lista de todos os registros de prescrições no sistema daquele determinado usuário.
+ *     responses:
+ *       200:
+ *         description: Lista de prescrições.
+ *       400:
+ *         description: Falha ao buscar prescrições.
+ */
+router.get('/prescriptions-user/:id', autenticarToken, findPrescriptionsByUser);
 
 /**
  * @swagger

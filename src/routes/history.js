@@ -3,12 +3,14 @@ const router = express.Router();
 const {
   createHistory,
   findHistories,
+  findHistoriesByUser,
   findHistoryById,
   updateHistory,
   deleteHistory,
 } = require('../controller/history'); // Importa todas as funções do controller
 const {
-  autenticarToken
+  autenticarToken,
+  isAdmin,
 } = require('../controller/login');
 
 
@@ -55,7 +57,21 @@ router.post('history', autenticarToken, createHistory);
  *       400:
  *         description: Falha ao buscar históricos.
  */
-router.get('/histories', autenticarToken, findHistories);
+router.get('/histories', autenticarToken, isAdmin, findHistories);
+
+/**
+ * @swagger
+ * /histories:
+ *   get:
+ *     summary: Lista todos os históricos do usuário logado
+ *     description: Obtém uma lista de todos os registros de histórico no sistema daquele usuário.
+ *     responses:
+ *       200:
+ *         description: Lista de históricos.
+ *       400:
+ *         description: Falha ao buscar históricos.
+ */
+router.get('/histories-user/:id', autenticarToken, findHistoriesByUser);
 
 /**
  * @swagger

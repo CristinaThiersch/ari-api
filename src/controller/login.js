@@ -42,6 +42,17 @@ const logout = async (req, res) => {
   res.status(500).json({ error: 'Erro ao realizar logout.' });
   }
 }
-  
 
-module.exports = {autenticarToken, login, logout};
+const isAdmin = async (req, res) => {
+  try {
+    const {email} = req.body;
+    const comparativo = email.split('@')[1];
+    if (comparativo === 'admin.com.br'){
+      res.status(200).json({email});
+    }
+  } catch (error) {
+    res.status(401).json({error: "Você não tem permissão para acessar esse recurso.", details: error.message});
+  }
+}
+  
+module.exports = {autenticarToken, login, logout, isAdmin};

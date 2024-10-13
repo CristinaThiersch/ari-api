@@ -20,12 +20,52 @@ const createHistory = async (req, res) => {
 // Função para obter todos os históricos
 const findHistories = async (req, res) => {
   try {
-    const histories = await prisma.history.findMany();
+    const histories = await prisma.history.findMany({
+      where: { 
+        AND: [
+          { idUser: parseInt(id) },
+          { status: true } 
+        ]
+      }});
+
+    if (!histories || !histories.status) {
+      return res.status(404).json({ error: 'Históricos não encontrados ou estão inativos.' });
+    }
     res.status(200).json(histories);
   } catch (error) {
     res.status(400).json({ error: 'Erro ao buscar históricos.', details: error.message });
   }
 };
+
+//Função para obter todo o histórico daquele usuário
+const findHistoriesByUser = async (req, res) => {
+  const { id } = req.params; // id do usuário
+  try {
+    const histories = await prisma.history.findMany({
+      where: {
+        prescription: {
+          userId: parseInt(id), // Filtrando pelo userId da relação Prescription
+        }
+      },
+      include: {
+        prescription: {
+          include: {
+            medication: true, 
+          }
+        }
+      }
+    });
+
+    if (!histories || histories.length === 0) {
+      return res.status(404).json({ error: 'Nenhum histórico encontrado para este usuário.' });
+    }
+
+    res.status(200).json(histories);
+  } catch (error) {
+    res.status(400).json({ error: 'Erro ao buscar históricos.', details: error.message });
+  }
+};
+
 
 // Função para obter um histórico por ID
 const findHistoryById = async (req, res) => {
@@ -70,6 +110,7 @@ const deleteHistory = async (req, res) => {
 module.exports = {
   createHistory,
   findHistories,
+  findHistoriesByUser,
   findHistoryById,
   updateHistory,
   deleteHistory,
