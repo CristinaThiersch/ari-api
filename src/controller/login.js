@@ -43,12 +43,13 @@ const logout = async (req, res) => {
   }
 }
 
-const isAdmin = async (req, res) => {
+const isAdmin = async (req, res, next) => {
   try {
     const {email} = req.body;
     const comparativo = email.split('@')[1];
     if (comparativo === 'admin.com.br'){
       res.status(200).json({email});
+      next();
     }
   } catch (error) {
     res.status(401).json({error: "Você não tem permissão para acessar esse recurso.", details: error.message});
