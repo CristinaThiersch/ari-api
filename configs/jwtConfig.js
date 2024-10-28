@@ -3,7 +3,6 @@ blacklist = [];
 
 
 const generateToken = (id) => {
-    console.log(process.env.SECRET_JWT)
 return jwt.sign({ id }, process.env.SECRET_JWT, { expiresIn: '1h' });
 }
 const verifyToken = (token) => {

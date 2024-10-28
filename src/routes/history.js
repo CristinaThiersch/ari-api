@@ -43,7 +43,7 @@ const {
  *       400:
  *         description: Falha ao criar o histórico.
  */
-router.post('history', autenticarToken, createHistory);
+router.post('/history', autenticarToken, createHistory);
 
 /**
  * @swagger
@@ -61,15 +61,22 @@ router.get('/histories', autenticarToken, isAdmin, findHistories);
 
 /**
  * @swagger
- * /histories:
+ * /histories-user/{id}:
  *   get:
- *     summary: Lista todos os históricos do usuário logado
- *     description: Obtém uma lista de todos os registros de histórico no sistema daquele usuário.
+ *     summary: Lista todos os medicamentos do usuário logado
+ *     description: Obtém uma lista de todos os registros de medicamento no sistema daquele usuário.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
- *         description: Lista de históricos.
+ *         description: Lista de medicamentos.
  *       400:
- *         description: Falha ao buscar históricos.
+ *         description: Falha ao buscar medicamentos.
  */
 router.get('/histories-user/:id', autenticarToken, findHistoriesByUser);
 

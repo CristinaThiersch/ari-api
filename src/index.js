@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocs = require('../configs/swaggerConfig');
 const userRoutes = require('./routes/user'); 
@@ -10,6 +11,7 @@ const loginRoutes = require('./routes/login');
 const env = require('dotenv').config();
 ;
 
+app.use(cors());
 app.use(express.json());
 
 // Rota para a documentação do Swagger

@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   createMedication,
   findMedications,
+  findMedicationsByUser,
   findMedicationById,
   updateMedication,
   deleteMedication,
@@ -59,6 +60,27 @@ router.post('/medication', autenticarToken, createMedication)
  *         description: Falha ao buscar medicamentos.
  */
 router.get('/medications', autenticarToken, findMedications);
+
+/**
+ * @swagger
+ * /medications-user/{id}:
+ *   get:
+ *     summary: Lista todos os medicamentos do usuário logado
+ *     description: Obtém uma lista de todos os registros de medicamento no sistema daquele usuário.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista de medicamentos.
+ *       400:
+ *         description: Falha ao buscar medicamentos.
+ */
+router.get('/medications-user/:id', autenticarToken, findMedicationsByUser);
 
 /**
  * @swagger

@@ -30,6 +30,34 @@ const findMedications = async (req, res) => {
   }
 };
 
+const findMedicationsByUser = async (req, res) => {
+  const { id } = req.params.id; // id do usuário
+  try {
+    const medications = await prisma.medication.findMany({
+      where: {
+        prescription: {
+          userId: parseInt(id), // Filtrando pelo userId da relação Prescription
+        }
+      },
+      include: {
+        prescription: {
+          include: {
+            medication: true, 
+          }
+        }
+      }
+    });
+
+    if (!medications || medications.length === 0) {
+      return res.status(404).json({ error: 'Nenhum medicamento encontrado para este usuário.' });
+    }
+
+    res.status(200).json(medications);
+  } catch (error) {
+    res.status(400).json({ error: 'Erro ao buscar medicamentos.', details: error.message });
+  }
+};
+
 // Função para obter um medicamento por ID
 const findMedicationById = async (req, res) => {
   const { id } = req.params;
@@ -91,6 +119,7 @@ const deleteMedication = async (req, res) => {
 module.exports = {
   createMedication,
   findMedications,
+  findMedicationsByUser,
   findMedicationById,
   updateMedication,
   deleteMedication,

@@ -101,6 +101,4 @@ module.exports = {
   findUserById,
   updateUser,
   deleteUser,
-  autenticarToken,
-  logout
 };
