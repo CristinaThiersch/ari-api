@@ -31,32 +31,30 @@ const findMedications = async (req, res) => {
 };
 
 const findMedicationsByUser = async (req, res) => {
-  const { id } = req.params.id; // id do usuário
+  const { id } = req.params; // id do usuário
   try {
     const medications = await prisma.medication.findMany({
       where: {
-        prescription: {
-          userId: parseInt(id), // Filtrando pelo userId da relação Prescription
-        }
+        prescriptions: {
+          some: {
+            userId: parseInt(id), // Certifique-se de que `id` seja um número
+          },
+        },
       },
       include: {
-        prescription: {
+        prescriptions: {
           include: {
-            medication: true, 
-          }
-        }
-      }
+            medication: true,
+          },
+        },
+      },
     });
-
-    if (!medications || medications.length === 0) {
-      return res.status(404).json({ error: 'Nenhum medicamento encontrado para este usuário.' });
-    }
-
     res.status(200).json(medications);
   } catch (error) {
     res.status(400).json({ error: 'Erro ao buscar medicamentos.', details: error.message });
   }
 };
+
 
 // Função para obter um medicamento por ID
 const findMedicationById = async (req, res) => {

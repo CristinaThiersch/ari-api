@@ -10,9 +10,9 @@ const login = async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: 'Credenciais inválidas' });
     }
-
+    const id = user.id;
     const token = jwtConfig.generateToken(user.id);
-    res.status(200).json({ token });
+    res.status(200).json({ token,  id});
   } catch (error) {
     res.status(400).json({ error: 'Erro ao criar usuário.', details: error.message });
   }
