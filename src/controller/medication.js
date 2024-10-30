@@ -38,6 +38,7 @@ const findMedicationsByUser = async (req, res) => {
         prescriptions: {
           some: {
             userId: parseInt(id), // Certifique-se de que `id` seja um número
+            status: true, // Adicionando a condição para status true
           },
         },
       },

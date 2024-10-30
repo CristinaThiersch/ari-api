@@ -67,26 +67,23 @@ const findPrescriptionById = async (req, res) => {
   }
 };
 
-// Função para atualizar uma prescrição
 const updatePrescription = async (req, res) => {
   const { id } = req.params;
   const { userId, medicationId, observation, frequency, startDate, endDate } = req.body;
+  
   try {
     const updatedPrescription = await prisma.prescription.update({
       where: { 
-        AND: [
-          { id: parseInt(id) },
-          { status: true } // Verifica se o status é true
-        ]
+        id: parseInt(id), // Use apenas o id aqui
       },
       data: { 
-        userId,
-        medicationId,
+        user: { connect: { id: parseInt(userId) } }, // Conectar o usuário pelo ID
+        medication: { connect: { id: parseInt(medicationId) } }, // Conectar o medicamento pelo ID
         observation,
         frequency,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        updatedAt: new Date() // Corrigido para pegar a data atual
+        // Removido o updatedAt aqui
       },
     });
     res.status(200).json(updatedPrescription);
@@ -95,18 +92,19 @@ const updatePrescription = async (req, res) => {
   }
 };
 
+
+
 // Função para deletar (desativar) uma prescrição
 const deletePrescription = async (req, res) => {
   const { id } = req.params;
   try {
     const deletedPrescription = await prisma.prescription.update({
-      where: { 
-        AND: [
-          { id: parseInt(id) },
-          { status: true } // Verifica se o status é true
-        ]
+      where: {
+        id: parseInt(id), // Use apenas o id aqui
       },
-      data: { status: false }, // Desativa a prescrição
+      data: {
+        status: false // Desativa a prescrição
+      }
     });
     res.status(200).json(deletedPrescription);
   } catch (error) {
