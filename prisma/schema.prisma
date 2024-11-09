@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = ../../configs/env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -52,6 +52,6 @@ model History {
   id               Int         @id @default(autoincrement())
   prescriptionId   Int
   currentDate      DateTime
-  status           String
+  status           Boolean
   prescription     Prescription @relation(fields: [prescriptionId], references: [id])
 }

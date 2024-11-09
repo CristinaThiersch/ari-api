@@ -1,9 +1,29 @@
 const prisma = require('../../prisma/prismaClient');
+const {
+  createHistory,
+} = require('../controller/history'); 
 
 // Função responsável por criar uma nova prescrição
 const createPrescription = async (req, res) => {
   const { userId, medicationId, observation, frequency, startDate, endDate } = req.body;
   try {
+    const prescription = await prisma.prescription.findFirst(
+      {
+        where: {
+          userId,
+          medicationId,
+          frequency,
+          startDate: new Date(startDate),
+          endDate: new Date(endDate),
+          status: true
+        }
+      }
+    );
+
+    if (prescription){
+      return res.status(400).json({error: "Prescrição já cadastrada. "});
+    }
+
     const newPrescription = await prisma.prescription.create({
       data: {
         userId,
@@ -15,11 +35,17 @@ const createPrescription = async (req, res) => {
         status: true,
       },
     });
+
+    await createHistory({
+      prescriptionId: newPrescription.id,
+    });
+
     res.status(201).json(newPrescription);
   } catch (error) {
     res.status(400).json({ error: 'Erro ao criar prescrição.', details: error.message });
   }
 };
+
 
 // Função para obter todas as prescrições
 const findPrescriptions = async (req, res) => {
@@ -67,6 +93,19 @@ const findPrescriptionById = async (req, res) => {
   }
 };
 
+const findPrescription = async(req, res)=> {
+  const { id } = req.params;
+  try {
+    const prescription = await prisma.prescription.findUnique({ where: { id: parseInt(id) } });
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescrição não encontrada' });
+    }
+    res.status(200).json(prescription);
+  } catch (error) {
+    res.status(400).json({ error: 'Erro ao buscar prescrição.', details: error.message });
+  }
+}
+
 const updatePrescription = async (req, res) => {
   const { id } = req.params;
   const { userId, medicationId, observation, frequency, startDate, endDate } = req.body;
@@ -85,6 +124,9 @@ const updatePrescription = async (req, res) => {
         endDate: new Date(endDate),
         // Removido o updatedAt aqui
       },
+    });
+    await createHistory({
+      prescriptionId: updatedPrescription.id,
     });
     res.status(200).json(updatedPrescription);
   } catch (error) {
@@ -106,6 +148,9 @@ const deletePrescription = async (req, res) => {
         status: false // Desativa a prescrição
       }
     });
+    await createHistory({
+      prescriptionId: deletedPrescription.id,
+    });
     res.status(200).json(deletedPrescription);
   } catch (error) {
     res.status(400).json({ error: 'Erro ao excluir prescrição.', details: error.message });
@@ -117,6 +162,7 @@ module.exports = {
   findPrescriptions,
   findPrescriptionsByUser,
   findPrescriptionById,
+  findPrescription,
   updatePrescription,
   deletePrescription,
 };

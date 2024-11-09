@@ -5,6 +5,7 @@ const {
   findPrescriptions,
   findPrescriptionsByUser,
   findPrescriptionById,
+  findPrescription,
   updatePrescription,
   deletePrescription,
 } = require('../controller/prescription'); // Importa todas as funções do controller
@@ -62,11 +63,18 @@ router.get('/prescriptions', autenticarToken, isAdmin, findPrescriptions);
 
 /**
  * @swagger
- * /prescriptions:
+ * /prescriptions-user/{id}:
  *   get:
  *     summary: Lista todas as prescrições do usuário logado
  *     description: Obtém uma lista de todos os registros de prescrições no sistema daquele determinado usuário.
- *     responses:
+*     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário associado aquela prescrição.
+ *         schema:
+ *           type: integer 
+*     responses:
  *       200:
  *         description: Lista de prescrições.
  *       400:
@@ -78,7 +86,7 @@ router.get('/prescriptions-user/:id', autenticarToken, findPrescriptionsByUser);
  * @swagger
  * /prescription/{id}:
  *   get:
- *     summary: Obtém uma prescrição por ID
+ *     summary: Obtém uma prescrição por ID com status true
  *     description: Retorna os detalhes de uma prescrição com base no ID fornecido.
  *     parameters:
  *       - in: path
@@ -96,6 +104,29 @@ router.get('/prescriptions-user/:id', autenticarToken, findPrescriptionsByUser);
  *         description: Falha ao buscar prescrição.
  */
 router.get('/prescription/:id', autenticarToken, findPrescriptionById);
+
+/**
+ * @swagger
+ * /prescription-history/{id}:
+ *   get:
+ *     summary: Obtém uma prescrição por ID independente do status
+ *     description: Retorna os detalhes de uma prescrição com base no ID fornecido.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID da prescrição a ser obtida.
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Detalhes da prescrição.
+ *       404:
+ *         description: Prescrição não encontrada.
+ *       400:
+ *         description: Falha ao buscar prescrição.
+ */
+router.get('/prescription-history/:id', autenticarToken, findPrescription);
 
 /**
  * @swagger

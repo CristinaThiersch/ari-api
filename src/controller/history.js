@@ -1,19 +1,18 @@
 const prisma = require('../../prisma/prismaClient');
 
 // Função responsável por criar um novo histórico
-const createHistory = async (req, res) => {
-  const { prescriptionId, currentDate, status } = req.body;
+const createHistory = async ({ prescriptionId}) => {
   try {
     const newHistory = await prisma.history.create({
       data: {
         prescriptionId,
-        currentDate: new Date(currentDate),
-        status,
+        currentDate: new Date(),
+        status: true,
       },
     });
-    res.status(201).json(newHistory);
+    return newHistory;
   } catch (error) {
-    res.status(400).json({ error: 'Erro ao criar histórico.', details: error.message });
+    throw new Error(`Erro ao criar histórico: ${error.message}`);
   }
 };
 
@@ -100,7 +99,14 @@ const updateHistory = async (req, res) => {
 const deleteHistory = async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedHistory = await prisma.history.delete({ where: { id: parseInt(id) } });
+    const deletedHistory = await prisma.history.update({
+      where: {
+        id: parseInt(id), // Use apenas o id aqui
+      },
+      data: {
+        status: false // Desativa a prescrição
+      }
+    });
     res.status(200).json(deletedHistory);
   } catch (error) {
     res.status(400).json({ error: 'Erro ao excluir histórico.', details: error.message });

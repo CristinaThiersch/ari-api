@@ -3,7 +3,19 @@ const prisma = require('../../prisma/prismaClient');
 // Função responsável por criar um novo medicamento
 const createMedication = async (req, res) => {
   const { name, functionMed, dosage } = req.body;
+  
   try {
+    const medication = await prisma.medication.findFirst({ 
+      where: { 
+        name, 
+        dosage 
+      } 
+    });
+
+    if (medication) {
+      return res.status(400).json({ error: 'Medicamento já existe.' });
+    }
+
     const newMedication = await prisma.medication.create({
       data: {
         name,
@@ -12,11 +24,13 @@ const createMedication = async (req, res) => {
         status: true,
       },
     });
+
     res.status(201).json(newMedication);
   } catch (error) {
     res.status(400).json({ error: 'Erro ao criar medicamento.', details: error.message });
   }
 };
+
 
 // Função para obter todos os medicamentos
 const findMedications = async (req, res) => {
@@ -62,8 +76,8 @@ const findMedicationById = async (req, res) => {
   const { id } = req.params;
   try {
     const medication = await prisma.medication.findUnique({ where: { id: parseInt(id) } });
-    if (!medication || !medication.status) {
-      return res.status(404).json({ error: 'Medicamento não encontrado ou está inativo.' });
+    if (!medication) {
+      return res.status(404).json({ error: 'Medicamento não encontrado' });
     }
     res.status(200).json(medication);
   } catch (error) {
