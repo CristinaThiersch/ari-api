@@ -85,30 +85,41 @@ const findMedicationById = async (req, res) => {
   }
 };
 
-// Função para atualizar um medicamento
 const updateMedication = async (req, res) => {
   const { id } = req.params;
   const { name, functionMed, dosage } = req.body;
+
   try {
+    // Verifica se o medicamento existe e está com status true
+    const medication = await prisma.medication.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!medication || medication.status !== true) {
+      return res.status(400).json({
+        error: 'Medicação não encontrada ou não está ativa.',
+      });
+    }
+
+    // Se encontrado, atualiza o medicamento
     const updatedMedication = await prisma.medication.update({
-      where: { 
-        AND: [
-          { id: parseInt(id) },
-          { status: true } // Verifica se o status é true
-        ]
-      },
+      where: { id: parseInt(id) }, // Usando o ID diretamente
       data: { 
         name, 
         functionMed, 
         dosage,
-        updatedAt: new Date() // Corrigido para pegar a data atual
       },
     });
+
     res.status(200).json(updatedMedication);
   } catch (error) {
-    res.status(400).json({ error: 'Erro ao atualizar medicamento.', details: error.message });
+    res.status(400).json({
+      error: 'Erro ao atualizar medicamento.',
+      details: error.message,
+    });
   }
 };
+
 
 // Função para deletar (desativar) um medicamento
 const deleteMedication = async (req, res) => {

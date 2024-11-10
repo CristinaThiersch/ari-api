@@ -148,7 +148,7 @@ router.get('/prescription-history/:id', autenticarToken, findPrescription);
  *           schema:
  *             type: object
  *             properties:
- *               patientId:
+ *               userId:
  *                 type: integer
  *                 description: ID do paciente associado à prescrição
  *               medicationId:
@@ -157,7 +157,7 @@ router.get('/prescription-history/:id', autenticarToken, findPrescription);
  *               dosage:
  *                 type: string
  *                 description: Dosagem prescrita
- *               instructions:
+ *               observation:
  *                 type: string
  *                 description: Instruções de uso da prescrição
  *     responses:

@@ -42,6 +42,7 @@ const findHistoriesByUser = async (req, res) => {
   try {
     const histories = await prisma.history.findMany({
       where: {
+        status: true,
         prescription: {
           userId: parseInt(id), // Filtrando pelo userId da relação Prescription
         }

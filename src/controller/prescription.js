@@ -125,9 +125,6 @@ const updatePrescription = async (req, res) => {
         // Removido o updatedAt aqui
       },
     });
-    await createHistory({
-      prescriptionId: updatedPrescription.id,
-    });
     res.status(200).json(updatedPrescription);
   } catch (error) {
     res.status(400).json({ error: 'Erro ao atualizar prescrição.', details: error.message });
