@@ -125,20 +125,28 @@ const updateMedication = async (req, res) => {
 const deleteMedication = async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedMedication = await prisma.medication.update({
-      where: { 
-        AND: [
-          { id: parseInt(id) },
-          { status: true } // Verifica se o status é true
-        ]
+    const medication = await prisma.medication.findFirst({
+      where: {
+        id: parseInt(id),
+        status: true, // Verifica se o status é true
       },
+    });
+
+    if (!medication) {
+      return res.status(404).json({ error: 'Medicamento não encontrado ou já desativado.' });
+    }
+
+    const deletedMedication = await prisma.medication.update({
+      where: { id: medication.id },
       data: { status: false }, // Desativa o medicamento
     });
+
     res.status(200).json(deletedMedication);
   } catch (error) {
     res.status(400).json({ error: 'Erro ao excluir medicamento.', details: error.message });
   }
 };
+
 
 module.exports = {
   createMedication,

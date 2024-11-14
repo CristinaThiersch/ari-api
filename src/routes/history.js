@@ -14,36 +14,36 @@ const {
 } = require('../controller/login');
 
 
-// /**
-//  * @swagger
-//  * /history:
-//  *   post:
-//  *     summary: Cria um novo histórico
-//  *     description: Adiciona um novo registro de histórico ao sistema com base nas informações fornecidas.
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               title:
-//  *                 type: string
-//  *                 description: Título do histórico
-//  *               description:
-//  *                 type: string
-//  *                 description: Descrição do histórico
-//  *               date:
-//  *                 type: string
-//  *                 format: date
-//  *                 description: Data do histórico
-//  *     responses:
-//  *       201:
-//  *         description: Histórico criado com sucesso.
-//  *       400:
-//  *         description: Falha ao criar o histórico.
-//  */
-// router.post('/history', autenticarToken, createHistory);
+/**
+ * @swagger
+ * /history:
+ *   post:
+ *     summary: Cria um novo histórico
+ *     description: Adiciona um novo registro de histórico ao sistema com base nas informações fornecidas.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Título do histórico
+ *               description:
+ *                 type: string
+ *                 description: Descrição do histórico
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 description: Data do histórico
+ *     responses:
+ *       201:
+ *         description: Histórico criado com sucesso.
+ *       400:
+ *         description: Falha ao criar o histórico.
+ */
+router.post('/history', autenticarToken, createHistory);
 
 /**
  * @swagger
